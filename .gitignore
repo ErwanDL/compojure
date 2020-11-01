@@ -12,4 +12,15 @@ pom.xml.asc
 .hg/
 .calva/
 
-**/*.e.*
+resources/e_snippets/array
+resources/e_snippets/char
+resources/e_snippets/funcall
+resources/e_snippets/globals
+resources/e_snippets/invader
+resources/e_snippets/ptr
+resources/e_snippets/real_args
+resources/e_snippets/strings
+resources/e_snippets/structs
+resources/e_snippets/type_basic
+resources/e_snippets/type_funcall
+resources/e_snippets/**/*.e.*
