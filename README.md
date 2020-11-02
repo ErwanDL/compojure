@@ -6,4 +6,4 @@ This is an application project for CentraleSupélec's compilation course : the c
 
 ## Features
 
-[x] Lexer and LL(1) parser
+- [x] Lexer and LL(1) parser
