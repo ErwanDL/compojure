@@ -4,7 +4,7 @@
 
 (def whitespace-and-comments-parser
   (insta/parser
-   (io/resource "whitespace.bnf")))
+   (io/resource "whitespace_comments.bnf")))
 
 (def e-parser
   (insta/parser

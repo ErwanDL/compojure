@@ -10,6 +10,7 @@
                      (str "e_snippets/" snippet-name))))))
 
 (deftest e-parser-test
+  
   (testing "On syntactically invalid programs"
     (is (not (successful-parse? "basic/lexerror.e")))
     (is (not (successful-parse? "basic/syntaxerror1.e")))

@@ -16,7 +16,7 @@
    (extract-regexes-from-grammar
     (slurp (io/resource "grammar.bnf")))
    (extract-regexes-from-grammar
-    (slurp (io/resource "whitespace.bnf")))))
+    (slurp (io/resource "whitespace_comments.bnf")))))
 
 (def identifier-re (get e-regexes "SYM_IDENTIFIER"))
 (deftest identifier-re-test
