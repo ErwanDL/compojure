@@ -1,16 +1,20 @@
 (ns compojure.parser-test
   (:require [clojure.test :refer [deftest is testing]]
             [clojure.java.io :as io]
-            [compojure.parser :refer [success? parse]]))
+            [compojure.parser :refer [e-parser parse]]
+            [instaparse.core :as insta]))
 
 
 (defn successful-parse? [snippet-name]
-  (success? (parse
-             (slurp (io/resource
-                     (str "e_snippets/" snippet-name))))))
+  ;; If insta/parses produces 0 parse tree,
+  ;; it means it failed to parse the input.
+  ;; If insta/parses produces strictly more than 1 parse tree,
+  ;; it means that the grammar is ambiguous.
+  (= 1 (count (insta/parses e-parser
+                            (slurp (io/resource
+                                    (str "e_snippets/" snippet-name)))))))
 
-(deftest e-parser-test
-  
+(deftest parser-basic-test
   (testing "On syntactically invalid programs"
     (is (not (successful-parse? "basic/lexerror.e")))
     (is (not (successful-parse? "basic/syntaxerror1.e")))
@@ -51,3 +55,19 @@
     (is (successful-parse? "basic/double.e"))
     (is (successful-parse? "basic/1_or_4.e"))
     (is (successful-parse? "basic/fac.e"))))
+
+(deftest parser-if-else-test
+  (is (successful-parse? "if_else/no_braces.e"))
+  (is (successful-parse? "if_else/dangling_else.e"))
+  (is (successful-parse? "if_else/if_while.e"))
+  (is (successful-parse? "if_else/else_open_statement.e"))
+  (testing "Dangling else is correctly paired with closest if"
+    (is (= [:S
+            [:FUNDEF
+             [:SYM_IDENTIFIER "main"]
+             [:PARAMS]
+             [:BLOCK
+              [:IF_NO_ELSE
+               [:SYM_INTEGER "5"]
+               [:IF_ELSE [:SYM_INTEGER "4"] [:PRINT [:SYM_INTEGER "4"]] [:PRINT [:SYM_INTEGER "5"]]]]]]]
+           (parse "main() { if (5) if (4) print(4); else print(5); }")))))

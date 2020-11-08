@@ -70,7 +70,7 @@
                                        are not accepted\"")))
   (is (not (re-matches string-re "you're not even trying"))))
 
-(def int-re (get e-regexes "SYM_INT"))
+(def int-re (get e-regexes "SYM_INTEGER"))
 (deftest int-re-test
   (is (re-matches int-re "0"))
   (is (re-matches int-re "9283"))

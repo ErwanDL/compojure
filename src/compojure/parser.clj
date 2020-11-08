@@ -13,6 +13,3 @@
 
 (defn parse [source-code]
   (insta/parse e-parser source-code))
-
-(defn success? [parse-result]
-  (not (insta/failure? parse-result)))
