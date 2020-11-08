@@ -19,7 +19,7 @@
 (defrecord BinaryExpr [binary-op expr-1 expr-2]
   Expr)
 
-(defrecord Assignment [var-ident expr]
+(defrecord Assignment [var-name expr]
   Statement)
 
 (defrecord IfThenElse [condition then-statement else-statement]
@@ -37,6 +37,6 @@
 (defrecord Print [expr]
   Statement)
 
-(defrecord Function [args body])
+(defrecord FunctionDef [name params body])
 
 (defrecord Program [functions])

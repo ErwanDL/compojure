@@ -30,3 +30,16 @@
       :WHILE_LOOP (e/->WhileLoop (sub-ast-to-expr (second sub-ast))
                                  (sub-ast-to-statement (nth sub-ast 2)))
       (throw (java.lang.IllegalArgumentException. "Sub-AST is not a valid statement")))))
+
+(defn sub-ast-to-fundef [sub-ast]
+  (if (= :FUNDEF (first sub-ast))
+    (let [[_ name params body] sub-ast]
+      (e/->FunctionDef (sub-ast-to-expr name)
+                       (map sub-ast-to-expr (rest params))
+                       (sub-ast-to-statement body)))
+    (throw (java.lang.IllegalArgumentException. "Sub-AST is not a valid function definition"))))
+
+(defn ast-to-program [ast]
+  (if (= :S (first ast))
+    (e/->Program (map sub-ast-to-fundef (rest ast)))
+    (throw (java.lang.IllegalArgumentException. "AST is not a valid program"))))
