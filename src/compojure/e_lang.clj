@@ -56,4 +56,9 @@
 
 (defrecord FunctionDef [name params body])
 
+
 (defrecord Program [functions])
+
+(defn get-main-fn [prog]
+  (first
+   (filter #(= (.name %) (->Identifier "main")) (.functions prog))))
