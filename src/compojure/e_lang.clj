@@ -15,7 +15,8 @@
 (defprotocol Expr
   (evaluate [this state]))
 
-(defprotocol Statement)
+(defprotocol Statement
+  (execute [this state]))
 
 
 (defrecord Int [value]
@@ -27,7 +28,7 @@
   (evaluate [this state]
     (let [value (get state name)]
       (if (nil? value)
-        (throw (java.lang.RuntimeException. (str "Variable '" name "' does not exist")))
+        (throw (ex-info (str "Variable '" name "' does not exist") {:type :error}))
         value))))
 
 (defrecord BinaryExpr [binary-op expr-1 expr-2]
@@ -36,23 +37,50 @@
                           (.evaluate expr-1 state)
                           (.evaluate expr-2 state))))
 
-(defrecord Assignment [var-name expr]
-  Statement)
+(defrecord Assignment [ident expr]
+  Statement
+  (execute
+    [this state]
+    (assoc state (.name ident) (.evaluate expr state))))
+
+(defn truthy? [val]
+  (and (not= 0 val) val))
 
 (defrecord IfThenElse [condition then-statement else-statement]
-  Statement)
+  Statement
+  (execute [this state]
+    (if (truthy? (.evaluate condition state))
+      (.execute then-statement state)
+      (.execute else-statement state))))
 
 (defrecord WhileLoop [condition statement]
-  Statement)
+  Statement
+  (execute [this state]
+    (loop [s state]
+      (if (not (truthy? (.evaluate condition s)))
+        s
+        (recur (.execute statement s))))))
 
 (defrecord Block [statements]
-  Statement)
+  Statement
+  (execute [this state]
+    (reduce #(.execute %2 %1) state statements)))
 
 (defrecord Return [expr]
-  Statement)
+  Statement
+  (execute [this state]
+    (let [return-val (.evaluate expr state)]
+      (throw (ex-info "Return statement encountered"
+                      {:type :return-statement
+                       :return-value return-val
+                       :final-state state})))))
 
 (defrecord Print [expr]
-  Statement)
+  Statement
+  (execute [this state]
+    (do
+      (println (.evaluate expr state))
+      state)))
 
 (defrecord FunctionDef [name params body])
 
