@@ -1,11 +1,6 @@
 (ns compojure.interpreter
   (:require [compojure.e-lang :refer [get-main-fn]]))
 
-(defn declare-var
-  "Returns the new state after declaring the variable"
-  [state name value]
-  (assoc state name value))
-
 (defn validate-args-count [main-fn provided-args]
   (when (< (count provided-args) (count (.params main-fn)))
     (throw (java.lang.IllegalArgumentException.
