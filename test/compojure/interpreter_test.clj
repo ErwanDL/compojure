@@ -8,14 +8,12 @@
 
 (deftest test-declare-var
   (is (= {"a" 2 "b" 4}
-         (let [state (atom  {})]
-           (declare-var state "a" 2)
-           (declare-var state "b" 4)
-           @state)))
+         (-> {}
+             (declare-var "a" 2)
+             (declare-var "b" 4))))
   (is (= {"a" 3}
-         (let [state (atom  {"a" 0})]
-           (declare-var state "a" 3)
-           @state))))
+         (-> {"a" 0}
+             (declare-var "a" 3)))))
 
 (def test-main-fn (e/->FunctionDef
                    (e/->Identifier "main")
@@ -30,12 +28,8 @@
 
 (deftest init-function-args-test
   (is (= {"a" 2 "b" 6}
-         (let [state (atom {})]
-           (init-function-args
-            state
-            test-main-fn
-            [2 6])
-           @state))))
+         (-> {}
+             (init-function-args test-main-fn [2 6])))))
 
 (deftest eval-e-prog-test
   (is (= {"a" 3 "b" -5}

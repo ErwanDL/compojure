@@ -25,7 +25,7 @@
 (defrecord Identifier [name]
   Expr
   (evaluate [this state]
-    (let [value (get @state name)]
+    (let [value (get state name)]
       (if (nil? value)
         (throw (java.lang.RuntimeException. (str "Variable '" name "' does not exist")))
         value))))
