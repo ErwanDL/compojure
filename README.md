@@ -12,3 +12,8 @@ This is an application project for CentraleSupélec's compilation course : the c
   $ lein run "main(a) { return a + 1; }" 4
   >> 5
   ```
+ 
+ - [ ] Translation to CFG
+ - [ ] Dead code detection and elimination
+ - [ ] Translation to RTL
+ - [ ] Translation to RISC-V assembly
