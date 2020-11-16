@@ -46,12 +46,14 @@
 (defn truthy? [val]
   (and (not= 0 val) val))
 
-(defrecord IfThenElse [condition then-statement else-statement]
+(defrecord IfThenElse [condition then-statement opt-else-statement]
   Statement
   (execute [this state]
     (if (truthy? (evaluate condition state))
       (.execute then-statement state)
-      (.execute else-statement state))))
+      (if (nil? opt-else-statement)
+        state
+        (.execute opt-else-statement state)))))
 
 (defrecord WhileLoop [condition statement]
   Statement

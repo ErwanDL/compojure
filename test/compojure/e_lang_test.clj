@@ -76,22 +76,29 @@
   (is (not (e/truthy? false)))
   (is (not (e/truthy? nil))))
 
-(defn generate-test-if-then-else [cond-expr]
-  (e/->IfThenElse
-   cond-expr
-   (e/->Assignment (e/->Identifier "a") (e/->Int 1))
-   (e/->Assignment (e/->Identifier "a") (e/->Int -1))))
 (deftest execute-if-then-else-test
-  (is (= {"a" 1}
-         (->> {}
-              (.execute (generate-test-if-then-else
-                         (e/->BinaryExpr
-                          :LESSER (e/->Int 0) (e/->Int 1)))))))
-  (is (= {"a" -1}
-         (->> {}
-              (.execute (generate-test-if-then-else
-                         (e/->BinaryExpr
-                          :GREATER (e/->Int 0) (e/->Int 1))))))))
+  (testing "With both then and else branches"
+    (is (= {"a" 1}
+           (->> {}
+                (.execute (e/->IfThenElse
+                           (e/->BinaryExpr
+                            :LESSER (e/->Int 0) (e/->Int 1))
+                           (e/->Assignment (e/->Identifier "a") (e/->Int 1))
+                           (e/->Assignment (e/->Identifier "a") (e/->Int -1)))))))
+    (is (= {"a" -1}
+           (->> {}
+                (.execute (e/->IfThenElse
+                           (e/->BinaryExpr
+                            :GREATER (e/->Int 0) (e/->Int 1))
+                           (e/->Assignment (e/->Identifier "a") (e/->Int 1))
+                           (e/->Assignment (e/->Identifier "a") (e/->Int -1))))))))
+  (testing "Without an else branch"
+    (is (= {}
+           (->> {}
+                (.execute (e/->IfThenElse
+                           (e/->Int 0)
+                           (e/->Assignment (e/->Identifier "a") (e/->Int 1))
+                           nil)))))))
 
 (defn generate-test-while-loop [cond-expr]
   (e/->WhileLoop
