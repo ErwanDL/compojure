@@ -65,10 +65,10 @@
   IfThenElse
   ; We start by inserting the "then" branch, that points to
   ; "successor" ; we then insert the "else" branch, that also
-  ; points to "successor" ; finally we insert the comparison,
-  ; whcih points to the start of the "then" branch and the 
+  ; points to "successor" ; finally we insert the condition,
+  ; which points to the start of the "then" branch and the 
   ; start of the "else" branch.
-  ; The inserted-node-id that is returned is that of the comparison.
+  ; The inserted-node-id that is returned is that of the condition.
   (to-cfg-node [this cfg next-id successor]
     (let [[cfg-w-then then-id id-after-then] (to-cfg-node
                                               (:then-statement this)
@@ -80,5 +80,19 @@
                                               cfg-w-then
                                               id-after-then
                                               successor)
-          cmp-node (cfgl/->Comparison (:condition this) then-id else-id)]
-      [(assoc cfg-w-else id-after-else cmp-node) id-after-else (inc id-after-else)])))
+          cmp-node (cfgl/->Condition (:condition this) then-id else-id)]
+      [(assoc cfg-w-else id-after-else cmp-node) id-after-else (inc id-after-else)]))
+
+  WhileLoop
+  ; We start by inserting the body statement at next-id + 1,
+  ; which points to next-id ; then we insert the condition 
+  ; statement at next-id, that points to the body statement
+  ; if true or successor if false.
+  (to-cfg-node [this cfg next-id successor]
+    (let [[cfg-w-body body-id id-after-body] (to-cfg-node
+                                              (:statement this)
+                                              cfg
+                                              (inc next-id)
+                                              next-id)
+          cmp-node (cfgl/->Condition (:condition this) body-id successor)]
+      [(assoc cfg-w-body next-id cmp-node) next-id id-after-body])))

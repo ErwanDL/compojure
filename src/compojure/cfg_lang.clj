@@ -11,7 +11,7 @@
   Node
   (successors [this] [successor]))
 
-(defrecord Comparison [expr succ-true succ-false]
+(defrecord Condition [expr succ-true succ-false]
   Node
   (successors [this] [succ-true succ-false]))
 

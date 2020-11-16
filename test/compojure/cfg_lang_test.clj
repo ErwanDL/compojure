@@ -16,7 +16,7 @@
                 (cfgl/->Print
                  (e/->Identifier "a")
                  2)
-                (cfgl/->Comparison
+                (cfgl/->Condition
                  (e/->Identifier "a")
                  3
                  5)

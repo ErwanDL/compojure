@@ -63,7 +63,7 @@
   (testing "With both then and else branches"
     (is (= [{1 (cfgl/->Print (e/->Int 1) 0)
              2 (cfgl/->Print (e/->Int -1) 0)
-             3 (cfgl/->Comparison (e/->Identifier "a") 1 2)}
+             3 (cfgl/->Condition (e/->Identifier "a") 1 2)}
             3
             4]
            (to-cfg-node
@@ -75,7 +75,7 @@
             0))))
   (testing "Without an else branch"
     (is (= [{1 (cfgl/->Print (e/->Int 1) 0)
-             2 (cfgl/->Comparison (e/->Identifier "a") 1 0)}
+             2 (cfgl/->Condition (e/->Identifier "a") 1 0)}
             2
             3]
            (to-cfg-node
@@ -85,3 +85,24 @@
             {}
             1
             0)))))
+
+(deftest while-loop-to-cfg-node-test
+  (is (= [{1 (cfgl/->Condition (e/->Identifier "a") 2 0)
+           2 (cfgl/->Assignment
+              (e/->Identifier "a")
+              (e/->BinaryExpr :SUM
+                              (e/->Identifier "a")
+                              (e/->Int 1))
+              1)}
+          1
+          3]
+         (to-cfg-node
+          (e/->WhileLoop (e/->Identifier "a")
+                         (e/->Assignment
+                          (e/->Identifier "a")
+                          (e/->BinaryExpr :SUM
+                                          (e/->Identifier "a")
+                                          (e/->Int 1))))
+          {}
+          1
+          0))))
