@@ -1,9 +1,9 @@
-(ns compojure.interpreter-test
+(ns compojure.e-interpreter-test
   (:require [clojure.test :refer [deftest is]]
             [compojure.e-lang :as e]
-            [compojure.interpreter :refer [enter-function
-                                           validate-args-count
-                                           eval-e-prog]]))
+            [compojure.e-interpreter :refer [enter-function
+                                             validate-args-count
+                                             eval-e-prog]]))
 
 (def test-main-fn (e/->FunctionDef
                    (e/->Identifier "main")

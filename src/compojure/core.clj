@@ -2,7 +2,7 @@
   (:gen-class)
   (:require [compojure.parser :refer [parse]]
             [compojure.e-prog :refer [ast-to-program]]
-            [compojure.interpreter :refer [eval-e-prog]]))
+            [compojure.e-interpreter :refer [eval-e-prog]]))
 
 
 (defn interpret-e-program

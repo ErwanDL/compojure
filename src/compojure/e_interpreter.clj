@@ -1,4 +1,4 @@
-(ns compojure.interpreter
+(ns compojure.e-interpreter
   (:require [compojure.e-lang :refer [get-main-fn]]))
 
 (defn validate-args-count [main-fn provided-args]
