@@ -2,7 +2,7 @@
 
 ;; At the moment, CFG expressions are just E expressions,
 ;; as defined in e-lang namespace.
-;; However, CFG nodes (nodes) differ from E nodes.
+;; However, CFG statements (nodes) differ from E statements.
 
 (defprotocol Node
   (successors [this]))
