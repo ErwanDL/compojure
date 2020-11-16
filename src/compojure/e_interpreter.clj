@@ -2,13 +2,13 @@
   (:require [compojure.e-lang :refer [get-main-fn execute]]))
 
 (defn validate-args-count [main-fn provided-args]
-  (when (< (count provided-args) (count (.params main-fn)))
+  (when (< (count provided-args) (count (:params main-fn)))
     (throw (java.lang.IllegalArgumentException.
             "Wrong number of arguments passed to main"))))
 
 (defn enter-function [fun args state]
   (into state
-        (map #(vector (.name %1) %2) (.params fun) args)))
+        (map #(vector (:name %1) %2) (:params fun) args)))
 
 (defn eval-e-prog
   "Returns the state of the program at the end of its execution"
@@ -18,7 +18,7 @@
     (validate-args-count main-fn args)
 
     (try
-      (execute (.body main-fn)
+      (execute (:body main-fn)
                (enter-function main-fn args initial-state))
       "Error : program ended without returning a value"
 

@@ -23,8 +23,8 @@
     [(assoc cfg
             next-id
             (cfgl/->Assignment
-             (.var-ident this)
-             (.expr this)
+             (:var-ident this)
+             (:expr this)
              successor))
      next-id
      (inc next-id)])
@@ -34,7 +34,7 @@
     [(assoc cfg
             next-id
             (cfgl/->Print
-             (.expr this)
+             (:expr this)
              successor))
      next-id
      (inc next-id)])
@@ -44,7 +44,7 @@
     [(assoc cfg
             next-id
             (cfgl/->Return
-             (.expr this)))
+             (:expr this)))
      next-id
      (inc next-id)])
 
@@ -60,7 +60,7 @@
      (fn [[g succ next] statement]
        (to-cfg-node statement g next succ))
      [cfg successor next-id]
-     (reverse (.statements this))))
+     (reverse (:statements this))))
 
   IfThenElse
   ; We start by inserting the "then" branch, that points to
@@ -71,14 +71,14 @@
   ; The inserted-node-id that is returned is that of the comparison.
   (to-cfg-node [this cfg next-id successor]
     (let [[cfg-w-then then-id id-after-then] (to-cfg-node
-                                              (.then-statement this)
+                                              (:then-statement this)
                                               cfg
                                               next-id
                                               successor)
           [cfg-w-else else-id id-after-else] (opt-else-to-cfg-node
-                                              (.opt-else-statement this)
+                                              (:opt-else-statement this)
                                               cfg-w-then
                                               id-after-then
                                               successor)
-          cmp-node (cfgl/->Comparison (.condition this) then-id else-id)]
+          cmp-node (cfgl/->Comparison (:condition this) then-id else-id)]
       [(assoc cfg-w-else id-after-else cmp-node) id-after-else (inc id-after-else)])))

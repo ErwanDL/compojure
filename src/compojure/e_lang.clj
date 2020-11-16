@@ -41,7 +41,7 @@
   Statement
   (execute
     [this state]
-    (assoc state (.name var-ident) (evaluate expr state))))
+    (assoc state (:name var-ident) (evaluate expr state))))
 
 (defn truthy? [val]
   (and (not= 0 val) val))
@@ -91,4 +91,4 @@
 
 (defn get-main-fn [prog]
   (first
-   (filter #(= (.name %) (->Identifier "main")) (.functions prog))))
+   (filter #(= (:name %) (->Identifier "main")) (:functions prog))))

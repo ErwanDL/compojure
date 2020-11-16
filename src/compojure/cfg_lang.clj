@@ -30,7 +30,7 @@
 (defn predecessors [node-id all-nodes]
   (reduce-kv
    (fn [prev-res current-index current-node]
-     (if (some #(= node-id %) (.successors current-node))
+     (if (some #(= node-id %) (successors current-node))
        (conj prev-res current-index)
        prev-res))
    []
