@@ -13,37 +13,23 @@
   (= 1 (count (insta/parses e-parser
                             (slurp snippet-file)))))
 
-(def invalid-snippet-names
-  #{"lexerror.e"
-    "syntaxerror1.e"
-    "syntaxerror2.e"})
-
-(def group-invalid-valid-basic-files
-  (group-by (fn [file]
-              (some #(= % (.getName file)) invalid-snippet-names))
-            (snippet-files-in "basic")))
-(def valid-basic-files
-  (get group-invalid-valid-basic-files nil))
-
-(def invalid-basic-files
-  (get group-invalid-valid-basic-files true))
 
 
-(deftest parser-basic-test
-  (testing "On syntactically valid programs"
-    (dorun (map #(is (successful-unambiguous-parse? %)) valid-basic-files)))
+(deftest successful-parse-test
+  (testing "On basic syntactically valid programs"
+    (dorun (map #(is (successful-unambiguous-parse? %)) (snippet-files-in "basic"))))
   (testing "On syntactically invalid programs"
-    (dorun (map #(is (not (successful-unambiguous-parse? %))) invalid-basic-files))))
+    (dorun (map #(is (not (successful-unambiguous-parse? %))) (snippet-files-in "invalid_syntax"))))
+  (testing "On programs with tricky or nested if/else"
+    (dorun (map #(is (successful-unambiguous-parse? %)) (snippet-files-in "if_else")))))
 
-(deftest parser-if-else-test
-  (dorun (map #(is (successful-unambiguous-parse? %)) (snippet-files-in "if_else")))
-  (testing "Dangling else is correctly paired with closest if"
-    (is (= [:S
-            [:FUNDEF
-             [:SYM_IDENTIFIER "main"]
-             [:PARAMS]
-             [:BLOCK
-              [:IF_NO_ELSE
-               [:SYM_INTEGER "5"]
-               [:IF_ELSE [:SYM_INTEGER "4"] [:PRINT [:SYM_INTEGER "4"]] [:PRINT [:SYM_INTEGER "5"]]]]]]]
-           (parse "main() { if (5) if (4) print(4); else print(5); }")))))
+(deftest dangling-else-test
+  (is (= [:S
+          [:FUNDEF
+           [:SYM_IDENTIFIER "main"]
+           [:PARAMS]
+           [:BLOCK
+            [:IF_NO_ELSE
+             [:SYM_INTEGER "5"]
+             [:IF_ELSE [:SYM_INTEGER "4"] [:PRINT [:SYM_INTEGER "4"]] [:PRINT [:SYM_INTEGER "5"]]]]]]]
+         (parse "main() { if (5) if (4) print(4); else print(5); }"))))
