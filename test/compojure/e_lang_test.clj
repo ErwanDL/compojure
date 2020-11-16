@@ -1,7 +1,7 @@
 (ns compojure.e-lang-test
   (:require [clojure.test :refer [deftest is assert-expr
                                   do-report testing]]
-            [compojure.e-lang :as e :refer [evaluate]]))
+            [compojure.e-lang :as e :refer [evaluate execute]]))
 
 
 (def test-main-fn (e/->FunctionDef
@@ -60,14 +60,14 @@
 (deftest execute-assignment-test
   (is (= {"a" 2 "b" 4}
          (->> {}
-              (.execute (e/->Assignment
-                         (e/->Identifier "a")
-                         (e/->Int  2)))
-              (.execute (e/->Assignment
-                         (e/->Identifier "b")
-                         (e/->BinaryExpr :MULTIPLICATION
-                                         (e/->Identifier "a")
-                                         (e/->Int 2))))))))
+              (execute (e/->Assignment
+                        (e/->Identifier "a")
+                        (e/->Int  2)))
+              (execute (e/->Assignment
+                        (e/->Identifier "b")
+                        (e/->BinaryExpr :MULTIPLICATION
+                                        (e/->Identifier "a")
+                                        (e/->Int 2))))))))
 
 (deftest truthy?-test
   (is (e/truthy? 5))
@@ -80,25 +80,25 @@
   (testing "With both then and else branches"
     (is (= {"a" 1}
            (->> {}
-                (.execute (e/->IfThenElse
-                           (e/->BinaryExpr
-                            :LESSER (e/->Int 0) (e/->Int 1))
-                           (e/->Assignment (e/->Identifier "a") (e/->Int 1))
-                           (e/->Assignment (e/->Identifier "a") (e/->Int -1)))))))
+                (execute (e/->IfThenElse
+                          (e/->BinaryExpr
+                           :LESSER (e/->Int 0) (e/->Int 1))
+                          (e/->Assignment (e/->Identifier "a") (e/->Int 1))
+                          (e/->Assignment (e/->Identifier "a") (e/->Int -1)))))))
     (is (= {"a" -1}
            (->> {}
-                (.execute (e/->IfThenElse
-                           (e/->BinaryExpr
-                            :GREATER (e/->Int 0) (e/->Int 1))
-                           (e/->Assignment (e/->Identifier "a") (e/->Int 1))
-                           (e/->Assignment (e/->Identifier "a") (e/->Int -1))))))))
+                (execute (e/->IfThenElse
+                          (e/->BinaryExpr
+                           :GREATER (e/->Int 0) (e/->Int 1))
+                          (e/->Assignment (e/->Identifier "a") (e/->Int 1))
+                          (e/->Assignment (e/->Identifier "a") (e/->Int -1))))))))
   (testing "Without an else branch"
     (is (= {}
            (->> {}
-                (.execute (e/->IfThenElse
-                           (e/->Int 0)
-                           (e/->Assignment (e/->Identifier "a") (e/->Int 1))
-                           nil)))))))
+                (execute (e/->IfThenElse
+                          (e/->Int 0)
+                          (e/->Assignment (e/->Identifier "a") (e/->Int 1))
+                          nil)))))))
 
 (defn generate-test-while-loop [cond-expr]
   (e/->WhileLoop
@@ -109,21 +109,21 @@
 (deftest execute-while-loop-test
   (is (= {"a" 5}
          (->> {"a" 0}
-              (.execute (generate-test-while-loop
-                         (e/->BinaryExpr :LESSER
-                                         (e/->Identifier "a")
-                                         (e/->Int 5)))))))
+              (execute (generate-test-while-loop
+                        (e/->BinaryExpr :LESSER
+                                        (e/->Identifier "a")
+                                        (e/->Int 5)))))))
   (is (= {"a" 0}
          (->> {"a" 0}
-              (.execute (generate-test-while-loop
-                         (e/->Identifier "a")))))))
+              (execute (generate-test-while-loop
+                        (e/->Identifier "a")))))))
 
 (deftest execute-block-test
   (is (= {"a" 2, "b" -8}
          (->> {}
-              (.execute (e/->Block
-                         [(e/->Assignment (e/->Identifier "a") (e/->Int 2))
-                          (e/->Assignment (e/->Identifier "b") (e/->Int -8))]))))))
+              (execute (e/->Block
+                        [(e/->Assignment (e/->Identifier "a") (e/->Int 2))
+                         (e/->Assignment (e/->Identifier "b") (e/->Int -8))]))))))
 
 (defmethod assert-expr 'thrown-ex-info-with-data?
   ;; Taken from https://clojureverse.org/t/testing-thrown-ex-info-exceptions/6146/3
@@ -149,8 +149,8 @@
                                   :return-value 4
                                   :final-state {"a" 5}}
                                  (->> {"a" 5}
-                                      (.execute (e/->Return
-                                                 (e/->Int 4))))))
+                                      (execute (e/->Return
+                                                (e/->Int 4))))))
 
   (testing "Nested return statement within if-else clause and block"
     (is (thrown-ex-info-with-data?
@@ -158,17 +158,17 @@
           :return-value 0
           :final-state {"a" 0}}
          (->> {}
-              (.execute (e/->IfThenElse
-                         (e/->Int 0)
-                         (e/->Assignment
-                          (e/->Identifier "a")
-                          (e/->Int 1))
-                         (e/->Block
-                          [(e/->Assignment
-                            (e/->Identifier "a")
-                            (e/->Int 0))
-                           (e/->Return
-                            (e/->Identifier "a"))])))))))
+              (execute (e/->IfThenElse
+                        (e/->Int 0)
+                        (e/->Assignment
+                         (e/->Identifier "a")
+                         (e/->Int 1))
+                        (e/->Block
+                         [(e/->Assignment
+                           (e/->Identifier "a")
+                           (e/->Int 0))
+                          (e/->Return
+                           (e/->Identifier "a"))])))))))
 
   (testing "Doesn't execute other statements after a Return"
     (is (thrown-ex-info-with-data?
@@ -176,13 +176,13 @@
           :return-value 0
           :final-state {}}
          (->> {}
-              (.execute (e/->Return (e/->Int 0)))
-              (.execute (e/->Assignment (e/->Identifier "a") (e/->Int 4))))))))
+              (execute (e/->Return (e/->Int 0)))
+              (execute (e/->Assignment (e/->Identifier "a") (e/->Int 4))))))))
 
 (deftest execute-print-test
   (is (= "5\n"
          (binding [*out* (java.io.StringWriter.)]
            (->> {"a" 5}
-                (.execute (e/->Print
-                           (e/->Identifier "a"))))
+                (execute (e/->Print
+                          (e/->Identifier "a"))))
            (str *out*)))))

@@ -50,10 +50,10 @@
   Statement
   (execute [this state]
     (if (truthy? (evaluate condition state))
-      (.execute then-statement state)
+      (execute then-statement state)
       (if (nil? opt-else-statement)
         state
-        (.execute opt-else-statement state)))))
+        (execute opt-else-statement state)))))
 
 (defrecord WhileLoop [condition statement]
   Statement
@@ -61,12 +61,12 @@
     (loop [s state]
       (if (not (truthy? (evaluate condition s)))
         s
-        (recur (.execute statement s))))))
+        (recur (execute statement s))))))
 
 (defrecord Block [statements]
   Statement
   (execute [this state]
-    (reduce #(.execute %2 %1) state statements)))
+    (reduce #(execute %2 %1) state statements)))
 
 (defrecord Return [expr]
   Statement

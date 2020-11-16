@@ -1,5 +1,5 @@
 (ns compojure.e-interpreter
-  (:require [compojure.e-lang :refer [get-main-fn]]))
+  (:require [compojure.e-lang :refer [get-main-fn execute]]))
 
 (defn validate-args-count [main-fn provided-args]
   (when (< (count provided-args) (count (.params main-fn)))
@@ -18,8 +18,8 @@
     (validate-args-count main-fn args)
 
     (try
-      (.execute (.body main-fn)
-                (enter-function main-fn args initial-state))
+      (execute (.body main-fn)
+               (enter-function main-fn args initial-state))
       "Error : program ended without returning a value"
 
       (catch clojure.lang.ExceptionInfo e
