@@ -4,10 +4,10 @@
             IfThenElse WhileLoop Block Print Return]))
 
 
-(defprotocol Expr
+(defprotocol EExpr
   (evaluate [this state]))
 
-(extend-protocol Expr
+(extend-protocol EExpr
   Int
   (evaluate [this state] (:value this))
 
@@ -26,10 +26,10 @@
 (defn truthy? [val]
   (and (not= 0 val) val))
 
-(defprotocol Statement
+(defprotocol EStatement
   (execute [this state]))
 
-(extend-protocol Statement
+(extend-protocol EStatement
   Assignment
   (execute
     [this state]
