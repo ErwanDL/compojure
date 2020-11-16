@@ -1,7 +1,7 @@
 (ns compojure.e-lang-test
   (:require [clojure.test :refer [deftest is assert-expr
                                   do-report testing]]
-            [compojure.e-lang :as e]))
+            [compojure.e-lang :as e :refer [evaluate]]))
 
 
 (def test-main-fn (e/->FunctionDef
@@ -21,40 +21,40 @@
 (deftest evaluate-int-test
   (is (= 10
          (->> {}
-              (.evaluate (e/->Int 10))))))
+              (evaluate (e/->Int 10))))))
 
 (deftest evaluate-identifier-test
   (is (= 5
          (->> {"a" 5}
-              (.evaluate (e/->Identifier "a")))))
+              (evaluate (e/->Identifier "a")))))
   (is (thrown? clojure.lang.ExceptionInfo
                (->> {"b" 4}
-                    (.evaluate (e/->Identifier "a"))))))
+                    (evaluate (e/->Identifier "a"))))))
 
 (deftest evaluate-binary-expr-test
   (is (= 6
          (->> {"a" 5}
-              (.evaluate
+              (evaluate
                (e/->BinaryExpr :SUM (e/->Identifier "a") (e/->Int 1))))))
   (is (= 50
          (->> {"a" 5 "b" 10}
-              (.evaluate
+              (evaluate
                (e/->BinaryExpr :MULTIPLICATION (e/->Identifier "a") (e/->Identifier "b"))))))
   (is (= 4
          (->> {}
-              (.evaluate
+              (evaluate
                (e/->BinaryExpr :DIVISION (e/->Int 9) (e/->Int 2))))))
   (is (= true
          (->> {}
-              (.evaluate
+              (evaluate
                (e/->BinaryExpr :NOT_EQ (e/->Int -5) (e/->Int 1))))))
   (is (= true
          (->> {"a" 5 "b" 5}
-              (.evaluate
+              (evaluate
                (e/->BinaryExpr :EQ (e/->Identifier "a") (e/->Identifier "b"))))))
   (is (= false
          (->> {"a" 6}
-              (.evaluate
+              (evaluate
                (e/->BinaryExpr :LESSER (e/->Identifier "a") (e/->Int 1)))))))
 
 (deftest execute-assignment-test

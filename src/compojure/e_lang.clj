@@ -34,14 +34,14 @@
 (defrecord BinaryExpr [binary-op expr-1 expr-2]
   Expr
   (evaluate [this state] ((get binary-ops binary-op)
-                          (.evaluate expr-1 state)
-                          (.evaluate expr-2 state))))
+                          (evaluate expr-1 state)
+                          (evaluate expr-2 state))))
 
-(defrecord Assignment [ident expr]
+(defrecord Assignment [var-ident expr]
   Statement
   (execute
     [this state]
-    (assoc state (.name ident) (.evaluate expr state))))
+    (assoc state (.name var-ident) (evaluate expr state))))
 
 (defn truthy? [val]
   (and (not= 0 val) val))
@@ -49,7 +49,7 @@
 (defrecord IfThenElse [condition then-statement else-statement]
   Statement
   (execute [this state]
-    (if (truthy? (.evaluate condition state))
+    (if (truthy? (evaluate condition state))
       (.execute then-statement state)
       (.execute else-statement state))))
 
@@ -57,7 +57,7 @@
   Statement
   (execute [this state]
     (loop [s state]
-      (if (not (truthy? (.evaluate condition s)))
+      (if (not (truthy? (evaluate condition s)))
         s
         (recur (.execute statement s))))))
 
@@ -69,7 +69,7 @@
 (defrecord Return [expr]
   Statement
   (execute [this state]
-    (let [return-val (.evaluate expr state)]
+    (let [return-val (evaluate expr state)]
       (throw (ex-info "Return statement encountered"
                       {:type :return-statement
                        :return-value return-val
@@ -79,7 +79,7 @@
   Statement
   (execute [this state]
     (do
-      (println (.evaluate expr state))
+      (println (evaluate expr state))
       state)))
 
 (defrecord FunctionDef [name params body])
