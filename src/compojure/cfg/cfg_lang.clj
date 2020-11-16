@@ -1,4 +1,4 @@
-(ns compojure.cfg-lang)
+(ns compojure.cfg.cfg-lang)
 
 ;; At the moment, CFG expressions are just E expressions,
 ;; as defined in e-lang namespace.

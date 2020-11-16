@@ -1,8 +1,8 @@
-(ns compojure.cfg-prog-test
+(ns compojure.cfg.cfg-prog-test
   (:require [clojure.test :refer [deftest is testing]]
-            [compojure.cfg-prog :refer [to-cfg-node]]
-            [compojure.cfg-lang :as cfgl]
-            [compojure.e-lang :as e]))
+            [compojure.cfg.cfg-prog :refer [to-cfg-node]]
+            [compojure.cfg.cfg-lang :as cfgl]
+            [compojure.e-lang.e-lang :as e]))
 
 (deftest assignment-to-cfg-node-test
   (is (= [{1 (cfgl/->Assignment

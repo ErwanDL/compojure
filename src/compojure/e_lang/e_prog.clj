@@ -1,5 +1,5 @@
-(ns compojure.e-prog
-  (:require [compojure.e-lang :as e]))
+(ns compojure.e-lang.e-prog
+  (:require [compojure.e-lang.e-lang :as e]))
 
 (defn sub-ast-to-expr [sub-ast]
   (let [parent (first sub-ast)]

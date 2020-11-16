@@ -1,8 +1,8 @@
-(ns compojure.e-prog-test
+(ns compojure.e-lang.e-prog-test
   (:require [clojure.test :refer [deftest is testing]]
-            [compojure.e-prog :refer
+            [compojure.e-lang.e-prog :refer
              [sub-ast-to-expr sub-ast-to-statement sub-ast-to-fundef ast-to-program]]
-            [compojure.e-lang :as e]))
+            [compojure.e-lang.e-lang :as e]))
 
 (deftest sub-ast-to-expr-test
   (testing "With valid expr ASTs"

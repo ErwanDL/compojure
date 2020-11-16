@@ -1,7 +1,7 @@
-(ns compojure.cfg-lang-test
+(ns compojure.cfg.cfg-lang-test
   (:require [clojure.test :refer [deftest is]]
-            [compojure.cfg-lang :as cfgl]
-            [compojure.e-lang :as e]))
+            [compojure.cfg.cfg-lang :as cfgl]
+            [compojure.e-lang.e-lang :as e]))
 
 (deftest cfg-predecessors-test
   (is (= #{2 4}

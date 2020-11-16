@@ -1,7 +1,7 @@
-(ns compojure.cfg-prog
-  (:import [compojure.e_lang Assignment Print
+(ns compojure.cfg.cfg-prog
+  (:import [compojure.e_lang.e_lang Assignment Print
             Return Block IfThenElse WhileLoop])
-  (:require [compojure.cfg-lang :as cfgl]))
+  (:require [compojure.cfg.cfg-lang :as cfgl]))
 
 
 

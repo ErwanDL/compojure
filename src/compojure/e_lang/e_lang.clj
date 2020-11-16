@@ -1,4 +1,4 @@
-(ns compojure.e-lang)
+(ns compojure.e-lang.e-lang)
 
 (def binary-ops {:SUM +
                  :DIFFERENCE -
@@ -32,11 +32,6 @@
 
 (defrecord Print [expr])
 
-(defrecord FunctionDef [name params body])
-
+(defrecord FunctionDef [ident params body])
 
 (defrecord Program [functions])
-
-(defn get-main-fn [prog]
-  (first
-   (filter #(= (:name %) (->Identifier "main")) (:functions prog))))

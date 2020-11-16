@@ -1,4 +1,4 @@
-(ns compojure.e-regex-test
+(ns compojure.grammar-regex-test
   (:require [clojure.test :refer [deftest is]]
             [clojure.java.io :as io]
             [clojure.string :as string]))
