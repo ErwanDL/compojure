@@ -1,6 +1,7 @@
 (ns compojure.cfg.cfg-exec
   (:require [compojure.e-lang.e-exec :refer [evaluate truthy?]]
-            [compojure.exceptions :refer [return-encountered]])
+            [compojure.exceptions :refer [return-encountered]]
+            [compojure.cfg.cfg-lang])
   (:import [compojure.cfg.cfg_lang Assignment Condition Print Return Nop]))
 
 (defprotocol CFGStatement

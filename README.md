@@ -7,14 +7,14 @@ This is an application project for CentraleSupélec's compilation course : the c
 ## Progress
 
 -   [x] Lexer and parser (using Instaparse)
--   [x] Translation from AST to E-lang high level representation, and interpreter for this representation (e_interpreter.clj). This interpreter is called by default from the main function :
+-   [x] Translation from AST to E-lang high level representation, and interpreter for this representation (`e_interpreter.clj`). This interpreter is called by default from the main function :
 
     ```
     $ lein run "main(a) { return a + 1; }" 4
     >> 5
     ```
 
--   [ ] Translation to CFG (Control Flow Graph) IR : in progress
+-   [x] Translation to CFG (Control Flow Graph) IR, and interpreter for this IR (`cfg_interpreter.clj`)
 -   [ ] Dead code detection and elimination
 -   [ ] Translation to RTL (Register Transfer Language)
 -   [ ] Translation to RISC-V assembly

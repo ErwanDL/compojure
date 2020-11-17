@@ -36,6 +36,6 @@
    []
    all-nodes))
 
-(defrecord FunctionDef [name params body-nodes entry-node])
+(defrecord FunctionDef [name params cfg entry-node])
 
 (defrecord Program [functions])
