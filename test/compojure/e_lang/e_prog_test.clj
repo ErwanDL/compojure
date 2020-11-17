@@ -1,5 +1,6 @@
 (ns compojure.e-lang.e-prog-test
   (:require [clojure.test :refer [deftest is testing]]
+            [compojure.test-utils] ;; for thrown-ex-info-with-data?
             [compojure.e-lang.e-prog :refer
              [sub-ast-to-expr sub-ast-to-statement sub-ast-to-fundef ast-to-program]]
             [compojure.e-lang.e-lang :as e]))

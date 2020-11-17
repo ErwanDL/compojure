@@ -1,7 +1,7 @@
 (ns compojure.e-lang.e-exec-test
-  (:require [clojure.test :refer [deftest is assert-expr
-                                  do-report testing]]
+  (:require [clojure.test :refer [deftest is  testing]]
             [compojure.e-lang.e-lang :as e]
+            [compojure.test-utils] ;; for thrown-ex-info-with-data?
             [compojure.e-lang.e-exec :refer [evaluate execute truthy?]]))
 
 
@@ -109,28 +109,11 @@
                     (e/->Assignment (e/->Identifier "b") (e/->Int -8))])
                   {}))))
 
-(defmethod assert-expr 'thrown-ex-info-with-data?
-  ;; Taken from https://clojureverse.org/t/testing-thrown-ex-info-exceptions/6146/3
-  [msg form]
-  (let [data (second form)
-        body (nthnext form 2)]
-    `(try ~@body
-          (do-report {:type :fail, :message ~msg
-                      :expected '~form, :actual nil})
-          (catch clojure.lang.ExceptionInfo e#
-            (let [expected# ~data
-                  actual# (ex-data e#)]
-              (if (= expected# actual#)
-                (do-report {:type :pass, :message ~msg
-                            :expected expected#, :actual actual#})
-                (do-report {:type :fail, :message ~msg
-                            :expected expected#, :actual actual#})))
-            e#))))
+
 
 (deftest execute-return-test
-  #_{:clj-kondo/ignore [:unresolved-symbol]}
-  (is (thrown-ex-info-with-data? {:type :return-statement
-                                  :return-value 4
+  (is (thrown-ex-info-with-data? {:type :return-encountered
+                                  :retval 4
                                   :final-state {"a" 5}}
                                  (execute (e/->Return
                                            (e/->Int 4))
@@ -138,8 +121,8 @@
 
   (testing "Nested return statement within if-else clause and block"
     (is (thrown-ex-info-with-data?
-         {:type :return-statement
-          :return-value 0
+         {:type :return-encountered
+          :retval 0
           :final-state {"a" 0}}
          (execute (e/->IfThenElse
                    (e/->Int 0)
@@ -156,8 +139,8 @@
 
   (testing "Doesn't execute other statements after a Return"
     (is (thrown-ex-info-with-data?
-         {:type :return-statement
-          :return-value 0
+         {:type :return-encountered
+          :retval 0
           :final-state {}}
          (->> {}
               (execute (e/->Return (e/->Int 0)))

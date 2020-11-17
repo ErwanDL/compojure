@@ -1,5 +1,7 @@
 (ns compojure.e-lang.e-exec
-  (:require [compojure.e-lang.e-lang :refer [binary-ops]])
+  (:require [compojure.e-lang.e-lang :refer [binary-ops]]
+            [compojure.exceptions :refer [return-encountered
+                                          unknown-ident-exception]])
   (:import [compojure.e_lang.e_lang Int Identifier BinaryExpr Assignment
             IfThenElse WhileLoop Block Print Return]))
 
@@ -15,7 +17,7 @@
   (evaluate [this state]
     (let [value (get state (:name this))]
       (if (nil? value)
-        (throw (ex-info (str "Variable '" (:name this) "' does not exist") {:type :error}))
+        (throw (unknown-ident-exception (:name this)))
         value)))
 
   BinaryExpr
@@ -57,10 +59,7 @@
   Return
   (execute [this state]
     (let [return-val (evaluate (:expr this) state)]
-      (throw (ex-info "Return statement encountered"
-                      {:type :return-statement
-                       :return-value return-val
-                       :final-state state}))))
+      (throw (return-encountered return-val state))))
 
   Print
   (execute [this state]

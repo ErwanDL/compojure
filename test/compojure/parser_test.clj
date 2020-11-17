@@ -2,7 +2,7 @@
   (:require [clojure.test :refer [deftest is testing]]
             [compojure.parser :refer [e-parser parse]]
             [instaparse.core :as insta]
-            [compojure.test-framework :refer [snippet-files-in]]))
+            [compojure.snippets-framework :refer [snippet-files-in]]))
 
 
 (defn successful-unambiguous-parse? [snippet-file]
