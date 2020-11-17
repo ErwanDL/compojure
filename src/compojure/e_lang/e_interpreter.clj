@@ -1,5 +1,9 @@
 (ns compojure.e-lang.e-interpreter
-  (:require [compojure.e-lang.e-exec :refer [execute]]))
+  (:require [compojure.e-lang.e-exec :refer [execute]]
+            [compojure.parser :refer [parse]]
+            [compojure.e-lang.e-prog :refer [ast-to-program]]
+            [compojure.exceptions :refer [arity-exception
+                                          no-return-exception]]))
 
 
 (defn get-main-fn [prog]
@@ -7,28 +11,31 @@
    (filter #(= (:name (:ident %)) "main") (:functions prog))))
 
 (defn validate-args-count [main-fn provided-args]
-  (when (< (count provided-args) (count (:params main-fn)))
-    (throw (java.lang.IllegalArgumentException.
-            "Wrong number of arguments passed to main"))))
+  (let [expected (count (:params main-fn))
+        actual (count provided-args)]
+    (when (> expected actual)
+      (throw (arity-exception (:name (:ident main-fn))
+                              expected actual)))))
 
-(defn enter-function [fun args state]
+(defn load-fn-args [fn args state]
   (into state
-        (map #(vector (:name %1) %2) (:params fun) args)))
+        (map #(vector (:name %1) %2) (:params fn) args)))
 
-(defn interpret-e-prog
-  "Returns the state of the program at the end of its execution"
-  [prog args]
-  (let [main-fn (get-main-fn prog)
-        initial-state {}]
+(defn execute-fn [fn args state]
+  (execute (:body fn) (load-fn-args fn args state))
+  (throw (no-return-exception fn)))
+
+(defn interpret
+  "Returns a map {:output ..., :error ..., :retval ...}"
+  [source-code args]
+  (let [e-prog (ast-to-program (parse source-code))
+        main-fn (get-main-fn e-prog) initial-state {}]
     (validate-args-count main-fn args)
-
-    (try
-      (execute (:body main-fn)
-               (enter-function main-fn args initial-state))
-      "Error : program ended without returning a value"
-
-      (catch clojure.lang.ExceptionInfo e
-        (let [data (ex-data e)]
-          (case (:type data)
-            :return-statement (:return-value data)
-            (str "Unkown error : " e)))))))
+    (binding [*out* (java.io.StringWriter.)]
+      (try
+        (execute-fn main-fn args initial-state)
+        (catch clojure.lang.ExceptionInfo e
+          (let [data (ex-data e)]
+            (if (= (:type data)  :return-encountered)
+              {:output (str *out*), :error nil, :retval (:retval data)}
+              {:output (str *out*), :error (ex-message e), :retval nil})))))))
