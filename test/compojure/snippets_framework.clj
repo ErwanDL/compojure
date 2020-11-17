@@ -38,7 +38,8 @@
   (let [split-name (string/split filepath #".e.expect_")]
     (if (= 1 (count split-name))
       []
-      (string/split (second split-name) #"_"))))
+      (for [x (string/split (second split-name) #"_")]
+        (Integer/parseInt x)))))
 
 (defn parse-expect-file [filepath]
   (let [args (parse-expect-file-args filepath)
@@ -66,6 +67,8 @@
 (defn test-interpreter-on-folder [interpreter-fn folder-name]
   (let [test-map (parse-expect-files-in-snippet-map
                   (match-expect-files-with-snippet-files folder-name))]
-    (dorun (map #(test-interpreter-on-snippet interpreter-fn (first %) (second %))
+    (dorun (map #(test-interpreter-on-snippet interpreter-fn
+                                              (slurp (first %))
+                                              (second %))
                 test-map))))
 

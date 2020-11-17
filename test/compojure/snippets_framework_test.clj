@@ -7,7 +7,7 @@
                                                   file-names-map-from]]))
 
 (deftest parse-expect-file-args-test
-  (is (= ["1" "3"]
+  (is (= [1 3]
          (parse-expect-file-args "/snippets/test.e.expect_1_3")))
   (is (= []
          (parse-expect-file-args "/snippets/test.e.expect")))
