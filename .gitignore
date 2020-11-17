@@ -11,6 +11,7 @@ pom.xml.asc
 .hgignore
 .hg/
 .calva/
+.clj-kondo/
 
 resources/e_snippets/array
 resources/e_snippets/char
