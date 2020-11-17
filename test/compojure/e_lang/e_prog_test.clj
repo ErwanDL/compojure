@@ -72,7 +72,7 @@
 (deftest sub-ast-to-fundef-test
   (testing "With valid function definition AST"
     (is (= (e/->FunctionDef
-            (e/->Identifier "myFun")
+            "myFun"
             [(e/->Identifier "a") (e/->Identifier "b")]
             (e/->Block [(e/->Print (e/->Identifier "a"))
                         (e/->Return (e/->Identifier "b"))]))
@@ -89,11 +89,11 @@
   (testing "With valid input program AST"
     (is (= (e/->Program
             [(e/->FunctionDef
-              (e/->Identifier "main")
+              "main"
               []
               (e/->Block [(e/->Return (e/->Int 4))]))
              (e/->FunctionDef
-              (e/->Identifier "identity")
+              "identity"
               [(e/->Identifier "a")]
               (e/->Block [(e/->Return (e/->Identifier "a"))]))])
            (ast-to-program

@@ -32,6 +32,6 @@
 
 (defrecord Print [expr])
 
-(defrecord FunctionDef [ident params body])
+(defrecord FunctionDef [name params body])
 
 (defrecord Program [functions])

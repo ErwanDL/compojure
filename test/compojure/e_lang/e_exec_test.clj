@@ -155,7 +155,7 @@
            (str *out*)))))
 
 (def test-main-fn (e/->FunctionDef
-                   (e/->Identifier "main")
+                   "main"
                    [(e/->Identifier "a") (e/->Identifier "b")]
                    (e/->Block [(e/->Assignment
                                 (e/->Identifier "b")

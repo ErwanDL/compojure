@@ -20,7 +20,7 @@
 
 (defn no-return-exception [fn]
   (ex-info (str "Reached end of execution of function "
-                (:name (:ident fn))
+                (:name fn)
                 " without encountering a return statement")
            {:type :no-return-ex
             :function fn}))

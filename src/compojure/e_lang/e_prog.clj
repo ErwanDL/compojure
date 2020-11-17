@@ -33,8 +33,8 @@
 
 (defn sub-ast-to-fundef [sub-ast]
   (if (= :FUNDEF (first sub-ast))
-    (let [[_ name params body] sub-ast]
-      (e/->FunctionDef (sub-ast-to-expr name)
+    (let [[_ [_ name] params body] sub-ast]
+      (e/->FunctionDef name
                        (map sub-ast-to-expr (rest params))
                        (sub-ast-to-statement body)))
     (throw (java.lang.IllegalArgumentException. "Sub-AST is not a valid function definition"))))

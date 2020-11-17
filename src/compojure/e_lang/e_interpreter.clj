@@ -8,13 +8,13 @@
 
 (defn get-main-fn [prog]
   (first
-   (filter #(= (:name (:ident %)) "main") (:functions prog))))
+   (filter #(= (:name %) "main") (:functions prog))))
 
 (defn validate-args-count [main-fn provided-args]
   (let [expected (count (:params main-fn))
         actual (count provided-args)]
     (when (> expected actual)
-      (throw (arity-exception (:name (:ident main-fn))
+      (throw (arity-exception (:name main-fn)
                               expected actual)))))
 
 (defn load-fn-args [fn args state]

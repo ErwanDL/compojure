@@ -10,7 +10,7 @@
 
 
 (def example-main-fn (e/->FunctionDef
-                      (e/->Identifier "main")
+                      "main"
                       [(e/->Identifier "a") (e/->Identifier "b")]
                       (e/->Block [(e/->Assignment
                                    (e/->Identifier "b")
@@ -31,7 +31,7 @@
               (load-fn-args example-main-fn [2 6])))))
 
 (def other-fn (e/->FunctionDef
-               (e/->Identifier "other")
+               "other"
                [(e/->Identifier "n")]
                (e/->Block [])))
 
