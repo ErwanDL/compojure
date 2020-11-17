@@ -96,3 +96,14 @@
                                               next-id)
           cmp-node (cfgl/->Condition (:condition this) body-id successor)]
       [(assoc cfg-w-body next-id cmp-node) next-id id-after-body])))
+
+(defn to-cfg-fn-def [e-fn-def]
+  (let [[cfg start-id _] (to-cfg-node (:body e-fn-def) {} 1 0)]
+    (cfgl/->FunctionDef (:name e-fn-def)
+                        (:params e-fn-def)
+                        cfg
+                        start-id)))
+
+(defn to-cfg-prog [e-prog]
+  (cfgl/->Program
+   (map to-cfg-fn-def (:functions e-prog))))

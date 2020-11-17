@@ -37,3 +37,5 @@
    all-nodes))
 
 (defrecord FunctionDef [name params body-nodes entry-node])
+
+(defrecord Program [functions])
