@@ -1,7 +1,7 @@
 (ns compojure.e-lang.e-exec-test
   (:require [clojure.test :refer [deftest is  testing]]
             [compojure.e-lang.e-lang :as e]
-            [compojure.test-utils] ;; for thrown-ex-info-with-data?
+            [compojure.test-utils] ;; for ex-info-thrown-with-data?
             [compojure.e-lang.e-exec :refer [evaluate execute truthy?]]))
 
 
@@ -112,7 +112,7 @@
 
 
 (deftest execute-return-test
-  (is (thrown-ex-info-with-data? {:type :return-encountered
+  (is (ex-info-thrown-with-data? {:type :return-encountered
                                   :retval 4
                                   :final-state {"a" 5}}
                                  (execute (e/->Return
@@ -120,7 +120,7 @@
                                           {"a" 5})))
 
   (testing "Nested return statement within if-else clause and block"
-    (is (thrown-ex-info-with-data?
+    (is (ex-info-thrown-with-data?
          {:type :return-encountered
           :retval 0
           :final-state {"a" 0}}
@@ -138,7 +138,7 @@
                   {}))))
 
   (testing "Doesn't execute other statements after a Return"
-    (is (thrown-ex-info-with-data?
+    (is (ex-info-thrown-with-data?
          {:type :return-encountered
           :retval 0
           :final-state {}}
@@ -147,16 +147,16 @@
               (execute (e/->Assignment (e/->Identifier "a") (e/->Int 4))))))))
 
 (deftest execute-print-test
-  (is (= "5\n"
-         (binding [*out* (java.io.StringWriter.)]
+  (binding [*out* (java.io.StringWriter.)]
+    (is (= {"a" 5}
            (execute (e/->Print
                      (e/->Identifier "a"))
-                    {"a" 5})
-           (str *out*)))))
+                    {"a" 5})))
+    (is (= "5\n" (str *out*)))))
 
 (def test-main-fn (e/->FunctionDef
                    "main"
-                   [(e/->Identifier "a") (e/->Identifier "b")]
+                   ["a" "b"]
                    (e/->Block [(e/->Assignment
                                 (e/->Identifier "b")
                                 (e/->BinaryExpr :SUM (e/->Identifier "a") (e/->Identifier "b")))

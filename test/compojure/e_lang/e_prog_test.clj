@@ -1,8 +1,8 @@
 (ns compojure.e-lang.e-prog-test
   (:require [clojure.test :refer [deftest is testing]]
-            [compojure.test-utils] ;; for thrown-ex-info-with-data?
+            [compojure.test-utils] ;; for ex-info-thrown-with-data?
             [compojure.e-lang.e-prog :refer
-             [sub-ast-to-expr sub-ast-to-statement sub-ast-to-fundef ast-to-program]]
+             [sub-ast-to-expr sub-ast-to-statement sub-ast-to-fundef ast-to-e-program]]
             [compojure.e-lang.e-lang :as e]))
 
 (deftest sub-ast-to-expr-test
@@ -73,7 +73,7 @@
   (testing "With valid function definition AST"
     (is (= (e/->FunctionDef
             "myFun"
-            [(e/->Identifier "a") (e/->Identifier "b")]
+            ["a" "b"]
             (e/->Block [(e/->Print (e/->Identifier "a"))
                         (e/->Return (e/->Identifier "b"))]))
            (sub-ast-to-fundef
@@ -85,7 +85,7 @@
     (is (thrown? java.lang.IllegalArgumentException
                  (sub-ast-to-fundef [:SUM [:SYM_INTEGER "4"] [:SYM_INTEGER "5"]])))))
 
-(deftest ast-to-program-test
+(deftest ast-to-e-program-test
   (testing "With valid input program AST"
     (is (= (e/->Program
             [(e/->FunctionDef
@@ -94,9 +94,9 @@
               (e/->Block [(e/->Return (e/->Int 4))]))
              (e/->FunctionDef
               "identity"
-              [(e/->Identifier "a")]
+              ["a"]
               (e/->Block [(e/->Return (e/->Identifier "a"))]))])
-           (ast-to-program
+           (ast-to-e-program
             [:S
              [:FUNDEF [:SYM_IDENTIFIER "main"] [:PARAMS]
               [:BLOCK [:RETURN [:SYM_INTEGER "4"]]]]
@@ -104,6 +104,6 @@
               [:BLOCK [:RETURN [:SYM_IDENTIFIER "a"]]]]]))))
   (testing "Throws with invalid program AST"
     (is (thrown? java.lang.IllegalArgumentException
-                 (ast-to-program
+                 (ast-to-e-program
                   [:FUNDEF [:SYM_IDENTIFIER "main"] [:PARAMS]
                    [:BLOCK [:RETURN [:SYM_INTEGER "4"]]]])))))

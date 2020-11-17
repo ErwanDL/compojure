@@ -2,7 +2,7 @@
   (:require [clojure.test :refer [assert-expr
                                   do-report]]))
 
-(defmethod assert-expr 'thrown-ex-info-with-data?
+(defmethod assert-expr 'ex-info-thrown-with-data?
   ;; Taken from https://clojureverse.org/t/testing-thrown-ex-info-exceptions/6146/3
   [msg form]
   (let [data (second form)
