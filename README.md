@@ -21,7 +21,7 @@ This is an application project for CentraleSupélec's compilation course : the c
 
 ## Language features
 
-More features will be added once a first working
+More features will be added once a first working compiler for the initial set of features is achieved.
 
 -   [x] Integer literals and variables
 -   [x] Integer arithmetic
