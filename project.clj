@@ -5,9 +5,9 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [instaparse "1.4.10"]
-                 [rhizome "0.2.9"]
-                 [cheshire "5.10.0"]
                  [org.clojure/tools.cli "1.0.194"]]
   :main ^:skip-aot compojure.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:dev {:dependencies [[rhizome "0.2.9"]
+                                  [cheshire "5.10.0"]]}
+             :uberjar {:aot :all}})
