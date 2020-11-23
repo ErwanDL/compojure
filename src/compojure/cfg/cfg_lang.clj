@@ -4,37 +4,17 @@
 ;; as defined in e-lang namespace.
 ;; However, CFG statements (nodes) differ from E statements.
 
-(defprotocol Node
-  (successors [this]))
 
-(defrecord Assignment [var-ident expr successor]
-  Node
-  (successors [this] [successor]))
+(defrecord Assignment [var-ident expr successor])
 
-(defrecord Condition [expr succ-true succ-false]
-  Node
-  (successors [this] [succ-true succ-false]))
+(defrecord Condition [expr succ-true succ-false])
 
-(defrecord Print [expr successor]
-  Node
-  (successors [this] [successor]))
+(defrecord Print [expr successor])
 
-(defrecord Return [expr]
-  Node
-  (successors [this] []))
+(defrecord Return [expr])
 
-(defrecord Nop [successor]
-  Node
-  (successors [this] [successor]))
+(defrecord Nop [successor])
 
-(defn predecessors [node-id all-nodes]
-  (reduce-kv
-   (fn [prev-res current-index current-node]
-     (if (some #(= node-id %) (successors current-node))
-       (conj prev-res current-index)
-       prev-res))
-   []
-   all-nodes))
 
 (defrecord FunctionDef [name params cfg entry-node])
 
