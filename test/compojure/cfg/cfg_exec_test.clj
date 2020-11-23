@@ -7,9 +7,9 @@
 
 (deftest execute-assignment-test
   (is (= [1 {"a" 5}]
-         (execute (cfgl/->Assignment (e/->Identifier "a")
+         (execute (cfgl/->Assignment "a"
                                      (e/->BinaryExpr :SUM
-                                                     (e/->Identifier "a")
+                                                     (e/->Variable "a")
                                                      (e/->Int 2))
                                      1)
                   {"a" 3}))))
@@ -37,7 +37,7 @@
        {:type :return-encountered
         :retval 0
         :final-state {"a" 0}}
-       (execute (cfgl/->Return (e/->Identifier "a")) {"a" 0}))))
+       (execute (cfgl/->Return (e/->Variable "a")) {"a" 0}))))
 
 (deftest execute-nop-test
   (is (= [1 {"a" 5}]

@@ -12,7 +12,7 @@
   Assignment
   (execute [this state]
     [(:successor this) (assoc state
-                              (:name (:var-ident this))
+                              (:var-name this)
                               (evaluate (:expr this) state))])
 
   Condition

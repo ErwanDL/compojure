@@ -13,39 +13,38 @@
          (predecessors
           5
           [(cfgl/->Assignment
-            (e/->Identifier "a")
+            "a"
             (e/->Int 3)
             1)
            (cfgl/->Print
-            (e/->Identifier "a")
+            (e/->Variable "a")
             2)
            (cfgl/->Condition
-            (e/->Identifier "a")
+            (e/->Variable "a")
             3
             5)
            (cfgl/->Assignment
-            (e/->Identifier
-             "a")
+            "a"
             (e/->Int 5)
             4)
            (cfgl/->Print
-            (e/->Identifier "a")
+            (e/->Variable "a")
             5)
            (cfgl/->Return
-            (e/->Identifier "a"))]))))
+            (e/->Variable "a"))]))))
 
 (deftest vars-used-in-expr-test
   (is (= #{}
          (vars-used-in-expr (e/->Int 5))))
   (is (= #{"a"}
-         (vars-used-in-expr (e/->Identifier "a"))))
+         (vars-used-in-expr (e/->Variable "a"))))
   (is (= #{"a" "b"}
          (vars-used-in-expr (e/->BinaryExpr
                              :SUM
                              (e/->BinaryExpr :MULTIPLICATION
-                                             (e/->Identifier "a")
+                                             (e/->Variable "a")
                                              (e/->Int 4))
-                             (e/->Identifier "b"))))))
+                             (e/->Variable "b"))))))
 
 (deftest live-vars-after-node-test
   (is (= #{"a" "b"}

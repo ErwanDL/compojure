@@ -7,7 +7,7 @@
 
 (deftest sub-ast-to-expr-test
   (testing "With valid expr ASTs"
-    (is (= (e/->Identifier "a") (sub-ast-to-expr [:SYM_IDENTIFIER "a"])))
+    (is (= (e/->Variable "a") (sub-ast-to-expr [:SYM_IDENTIFIER "a"])))
     (is (= (e/->Int 2) (sub-ast-to-expr [:SYM_INTEGER "2"])))
     (is (= (e/->BinaryExpr
             :SUM
@@ -18,7 +18,7 @@
   (testing "With nested binary expressions"
     (is (= (e/->BinaryExpr
             :EQ
-            (e/->BinaryExpr :SUM (e/->Int 5) (e/->Identifier "a"))
+            (e/->BinaryExpr :SUM (e/->Int 5) (e/->Variable "a"))
             (e/->Int 4))
            (sub-ast-to-expr
             [:EQ [:SUM [:SYM_INTEGER "5"] [:SYM_IDENTIFIER "a"]] [:SYM_INTEGER "4"]]))))
@@ -29,22 +29,22 @@
 
 (deftest sub-ast-to-statement-test
   (testing "With valid statement ASTs"
-    (is (= (e/->Assignment (e/->Identifier "a") (e/->Int 5))
+    (is (= (e/->Assignment "a" (e/->Int 5))
            (sub-ast-to-statement
             [:ASSIGNMENT [:SYM_IDENTIFIER "a"] [:SYM_INTEGER "5"]])))
-    (is (= (e/->Block [(e/->Assignment (e/->Identifier "a") (e/->Int 5))
-                       (e/->Assignment (e/->Identifier "b") (e/->Identifier "a"))])
+    (is (= (e/->Block [(e/->Assignment "a" (e/->Int 5))
+                       (e/->Assignment "b" (e/->Variable "a"))])
            (sub-ast-to-statement [:BLOCK
                                   [:ASSIGNMENT [:SYM_IDENTIFIER "a"] [:SYM_INTEGER "5"]]
                                   [:ASSIGNMENT [:SYM_IDENTIFIER "b"] [:SYM_IDENTIFIER "a"]]])))
     (is (= (e/->Return (e/->Int 3))
            (sub-ast-to-statement [:RETURN [:SYM_INTEGER "3"]])))
-    (is (= (e/->Print (e/->Identifier "a"))
+    (is (= (e/->Print (e/->Variable "a"))
            (sub-ast-to-statement [:PRINT [:SYM_IDENTIFIER "a"]])))
     (is (= (e/->WhileLoop
-            (e/->BinaryExpr :NOT_EQ (e/->Identifier "a") (e/->Identifier "b"))
-            (e/->Assignment (e/->Identifier "a")
-                            (e/->BinaryExpr :SUM (e/->Identifier "a") (e/->Int 1))))
+            (e/->BinaryExpr :NOT_EQ (e/->Variable "a") (e/->Variable "b"))
+            (e/->Assignment "a"
+                            (e/->BinaryExpr :SUM (e/->Variable "a") (e/->Int 1))))
            (sub-ast-to-statement
             [:WHILE_LOOP
              [:NOT_EQ [:SYM_IDENTIFIER "a"] [:SYM_IDENTIFIER "b"]]
@@ -57,8 +57,8 @@
              (sub-ast-to-statement
               [:IF_NO_ELSE [:EQ [:SYM_INTEGER "2"] [:SYM_INTEGER "2"]] [:PRINT [:SYM_INTEGER "5"]]])))
       (is (= (e/->IfThenElse
-              (e/->BinaryExpr :LESSER (e/->Identifier "a") (e/->Int 5))
-              (e/->Block [(e/->Print (e/->Identifier "a"))])
+              (e/->BinaryExpr :LESSER (e/->Variable "a") (e/->Int 5))
+              (e/->Block [(e/->Print (e/->Variable "a"))])
               (e/->Print (e/->Int 0)))
              (sub-ast-to-statement
               [:IF_ELSE
@@ -74,8 +74,8 @@
     (is (= (e/->FunctionDef
             "myFun"
             ["a" "b"]
-            (e/->Block [(e/->Print (e/->Identifier "a"))
-                        (e/->Return (e/->Identifier "b"))]))
+            (e/->Block [(e/->Print (e/->Variable "a"))
+                        (e/->Return (e/->Variable "b"))]))
            (sub-ast-to-fundef
             [:FUNDEF
              [:SYM_IDENTIFIER "myFun"]
@@ -95,7 +95,7 @@
              (e/->FunctionDef
               "identity"
               ["a"]
-              (e/->Block [(e/->Return (e/->Identifier "a"))]))])
+              (e/->Block [(e/->Return (e/->Variable "a"))]))])
            (ast-to-e-program
             [:S
              [:FUNDEF [:SYM_IDENTIFIER "main"] [:PARAMS]

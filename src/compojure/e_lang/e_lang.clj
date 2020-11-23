@@ -16,11 +16,11 @@
 
 (defrecord Int [value])
 
-(defrecord Identifier [name])
+(defrecord Variable [name])
 
 (defrecord BinaryExpr [binary-op expr-1 expr-2])
 
-(defrecord Assignment [var-ident expr])
+(defrecord Assignment [var-name expr])
 
 (defrecord IfThenElse [condition then-statement opt-else-statement])
 

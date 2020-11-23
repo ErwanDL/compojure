@@ -4,7 +4,7 @@
 (defn sub-ast-to-expr [sub-ast]
   (let [parent (first sub-ast)]
     (cond
-      (= :SYM_IDENTIFIER parent) (e/->Identifier (second sub-ast))
+      (= :SYM_IDENTIFIER parent) (e/->Variable (second sub-ast))
       (= :SYM_INTEGER parent) (e/->Int (Integer/parseInt (second sub-ast)))
       (contains? e/binary-ops parent) (e/->BinaryExpr
                                        (first sub-ast)
@@ -16,7 +16,7 @@
   (let [parent (first sub-ast)]
     (case parent
       :ASSIGNMENT (e/->Assignment
-                   (sub-ast-to-expr (second sub-ast))
+                   (second (second sub-ast))
                    (sub-ast-to-expr (nth sub-ast 2)))
       :BLOCK (e/->Block (map sub-ast-to-statement (rest sub-ast)))
       :RETURN (e/->Return (sub-ast-to-expr (second sub-ast)))

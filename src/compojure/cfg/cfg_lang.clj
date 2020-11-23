@@ -5,7 +5,7 @@
 ;; However, CFG statements (nodes) differ from E statements.
 
 
-(defrecord Assignment [var-ident expr successor])
+(defrecord Assignment [var-name expr successor])
 
 (defrecord Condition [expr succ-true succ-false])
 

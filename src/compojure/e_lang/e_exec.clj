@@ -2,7 +2,7 @@
   (:require [compojure.e-lang.e-lang :refer [binary-ops]]
             [compojure.exceptions :refer [return-encountered
                                           unknown-ident-exception]])
-  (:import [compojure.e_lang.e_lang Int Identifier BinaryExpr Assignment
+  (:import [compojure.e_lang.e_lang Int Variable BinaryExpr Assignment
             IfThenElse WhileLoop Block Print Return]))
 
 
@@ -13,7 +13,7 @@
   Int
   (evaluate [this state] (:value this))
 
-  Identifier
+  Variable
   (evaluate [this state]
     (let [value (get state (:name this))]
       (if (nil? value)
@@ -35,7 +35,7 @@
   Assignment
   (execute
     [this state]
-    (assoc state (:name (:var-ident this)) (evaluate (:expr this) state)))
+    (assoc state (:var-name this) (evaluate (:expr this) state)))
 
   IfThenElse
   (execute [this state]

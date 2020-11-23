@@ -23,7 +23,7 @@
     [(assoc cfg
             next-id
             (cfgl/->Assignment
-             (:var-ident this)
+             (:var-name this)
              (:expr this)
              successor))
      next-id

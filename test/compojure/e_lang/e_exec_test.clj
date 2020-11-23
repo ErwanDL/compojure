@@ -11,18 +11,18 @@
 
 (deftest evaluate-identifier-test
   (is (= 5
-         (evaluate (e/->Identifier "a") {"a" 5})))
+         (evaluate (e/->Variable "a") {"a" 5})))
   (is (thrown? clojure.lang.ExceptionInfo
-               (evaluate (e/->Identifier "a") {"b" 4}))))
+               (evaluate (e/->Variable "a") {"b" 4}))))
 
 (deftest evaluate-binary-expr-test
   (is (= 6
          (evaluate
-          (e/->BinaryExpr :SUM (e/->Identifier "a") (e/->Int 1))
+          (e/->BinaryExpr :SUM (e/->Variable "a") (e/->Int 1))
           {"a" 5})))
   (is (= 50
          (evaluate
-          (e/->BinaryExpr :MULTIPLICATION (e/->Identifier "a") (e/->Identifier "b"))
+          (e/->BinaryExpr :MULTIPLICATION (e/->Variable "a") (e/->Variable "b"))
           {"a" 5 "b" 10})))
   (is (= 4
          (evaluate
@@ -34,23 +34,23 @@
           {})))
   (is (= true
          (evaluate
-          (e/->BinaryExpr :EQ (e/->Identifier "a") (e/->Identifier "b"))
+          (e/->BinaryExpr :EQ (e/->Variable "a") (e/->Variable "b"))
           {"a" 5 "b" 5})))
   (is (= false
          (evaluate
-          (e/->BinaryExpr :LESSER (e/->Identifier "a") (e/->Int 1))
+          (e/->BinaryExpr :LESSER (e/->Variable "a") (e/->Int 1))
           {"a" 6}))))
 
 (deftest execute-assignment-test
   (is (= {"a" 2 "b" 4}
          (->> {}
               (execute (e/->Assignment
-                        (e/->Identifier "a")
+                        "a"
                         (e/->Int  2)))
               (execute (e/->Assignment
-                        (e/->Identifier "b")
+                        "b"
                         (e/->BinaryExpr :MULTIPLICATION
-                                        (e/->Identifier "a")
+                                        (e/->Variable "a")
                                         (e/->Int 2))))))))
 
 (deftest truthy?-test
@@ -66,21 +66,21 @@
            (execute (e/->IfThenElse
                      (e/->BinaryExpr
                       :LESSER (e/->Int 0) (e/->Int 1))
-                     (e/->Assignment (e/->Identifier "a") (e/->Int 1))
-                     (e/->Assignment (e/->Identifier "a") (e/->Int -1)))
+                     (e/->Assignment "a" (e/->Int 1))
+                     (e/->Assignment "a" (e/->Int -1)))
                     {})))
     (is (= {"a" -1}
            (execute (e/->IfThenElse
                      (e/->BinaryExpr
                       :GREATER (e/->Int 0) (e/->Int 1))
-                     (e/->Assignment (e/->Identifier "a") (e/->Int 1))
-                     (e/->Assignment (e/->Identifier "a") (e/->Int -1)))
+                     (e/->Assignment "a" (e/->Int 1))
+                     (e/->Assignment "a" (e/->Int -1)))
                     {}))))
   (testing "Without an else branch"
     (is (= {}
            (execute (e/->IfThenElse
                      (e/->Int 0)
-                     (e/->Assignment (e/->Identifier "a") (e/->Int 1))
+                     (e/->Assignment "a" (e/->Int 1))
                      nil)
                     {})))))
 
@@ -88,25 +88,25 @@
   (e/->WhileLoop
    cond-expr
    (e/->Assignment
-    (e/->Identifier "a")
-    (e/->BinaryExpr :SUM (e/->Identifier "a") (e/->Int 1)))))
+    "a"
+    (e/->BinaryExpr :SUM (e/->Variable "a") (e/->Int 1)))))
 (deftest execute-while-loop-test
   (is (= {"a" 5}
          (execute (generate-test-while-loop
                    (e/->BinaryExpr :LESSER
-                                   (e/->Identifier "a")
+                                   (e/->Variable "a")
                                    (e/->Int 5)))
                   {"a" 0})))
   (is (= {"a" 0}
          (execute (generate-test-while-loop
-                   (e/->Identifier "a"))
+                   (e/->Variable "a"))
                   {"a" 0}))))
 
 (deftest execute-block-test
   (is (= {"a" 2, "b" -8}
          (execute (e/->Block
-                   [(e/->Assignment (e/->Identifier "a") (e/->Int 2))
-                    (e/->Assignment (e/->Identifier "b") (e/->Int -8))])
+                   [(e/->Assignment "a" (e/->Int 2))
+                    (e/->Assignment "b" (e/->Int -8))])
                   {}))))
 
 
@@ -127,14 +127,14 @@
          (execute (e/->IfThenElse
                    (e/->Int 0)
                    (e/->Assignment
-                    (e/->Identifier "a")
+                    "a"
                     (e/->Int 1))
                    (e/->Block
                     [(e/->Assignment
-                      (e/->Identifier "a")
+                      "a"
                       (e/->Int 0))
                      (e/->Return
-                      (e/->Identifier "a"))]))
+                      (e/->Variable "a"))]))
                   {}))))
 
   (testing "Doesn't execute other statements after a Return"
@@ -144,13 +144,13 @@
           :final-state {}}
          (->> {}
               (execute (e/->Return (e/->Int 0)))
-              (execute (e/->Assignment (e/->Identifier "a") (e/->Int 4))))))))
+              (execute (e/->Assignment  "a" (e/->Int 4))))))))
 
 (deftest execute-print-test
   (binding [*out* (java.io.StringWriter.)]
     (is (= {"a" 5}
            (execute (e/->Print
-                     (e/->Identifier "a"))
+                     (e/->Variable "a"))
                     {"a" 5})))
     (is (= "5\n" (str *out*)))))
 
@@ -158,6 +158,6 @@
                    "main"
                    ["a" "b"]
                    (e/->Block [(e/->Assignment
-                                (e/->Identifier "b")
-                                (e/->BinaryExpr :SUM (e/->Identifier "a") (e/->Identifier "b")))
-                               (e/->Return (e/->Identifier "b"))])))
+                                "b"
+                                (e/->BinaryExpr :SUM (e/->Variable "a") (e/->Variable "b")))
+                               (e/->Return (e/->Variable "b"))])))

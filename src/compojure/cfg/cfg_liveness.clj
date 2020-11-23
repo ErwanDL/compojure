@@ -4,7 +4,24 @@
             [clojure.set :refer [difference]])
   (:import [compojure.cfg.cfg_lang Assignment Condition
             Print Return Nop]
-           [compojure.e_lang.e_lang BinaryExpr Identifier Int]))
+           [compojure.e_lang.e_lang BinaryExpr Variable Int]))
+
+
+(defprotocol CfgExpr
+  (vars-used-in-expr [this]))
+
+(extend-protocol CfgExpr
+  Int
+  (vars-used-in-expr [this] #{})
+
+  Variable
+  (vars-used-in-expr [this] #{(:name this)})
+
+  BinaryExpr
+  (vars-used-in-expr [this] (into
+                             (vars-used-in-expr (:expr-1 this))
+                             (vars-used-in-expr (:expr-2 this)))))
+
 
 (defprotocol Node
   (successors [this])
@@ -17,7 +34,7 @@
   (vars-used-in-node [this]
     (vars-used-in-expr (:expr this)))
   (vars-defined-in-node [this]
-    #{(:var-ident this)})
+    #{(:var-name this)})
 
   Condition
   (successors [this] #{(:succ-true this) (:succ-false this)})
@@ -55,22 +72,6 @@
        prev-res))
    #{}
    all-nodes))
-
-
-(defprotocol CfgExpr
-  (vars-used-in-expr [this]))
-
-(extend-protocol CfgExpr
-  Int
-  (vars-used-in-expr [this] #{})
-
-  Identifier
-  (vars-used-in-expr [this] #{(:name this)})
-
-  BinaryExpr
-  (vars-used-in-expr [this] (into
-                             (vars-used-in-expr (:expr-1 this))
-                             (vars-used-in-expr (:expr-2 this)))))
 
 (defn live-vars-after-node
   "The live vars after a node are just the union of the
