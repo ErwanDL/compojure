@@ -1,4 +1,4 @@
-(ns compojure.cfg.cfg-liveness
+(ns compojure.cfg.liveness
   (:require [compojure.cfg.cfg-lang]
             [compojure.e-lang.e-lang]
             [clojure.set :refer [difference]])
@@ -59,7 +59,7 @@
 
   Nop
   (successors [this] #{(:successor this)})
-  (vars-used-in-node [this] {})
+  (vars-used-in-node [this] #{})
   (vars-defined-in-node [this]
     #{}))
 
@@ -88,3 +88,25 @@
   [node live-vars-after]
   (into (vars-used-in-node node)
         (difference live-vars-after (vars-defined-in-node node))))
+
+(defn- cfg-liveness-iteration
+  "Computes one iteration of the liveness analysis algorithm,
+   returns the updated map of the live vars before each node"
+  [cfg live-vars-before-map]
+  (reduce (fn [m [k v]]
+            (assoc m k (live-vars-before-node
+                        v
+                        (live-vars-after-node v m))))
+          live-vars-before-map
+          cfg))
+
+(defn compute-cfg-liveness [cfg]
+  (loop [live-vars-map (reduce
+                        #(assoc %1 %2 #{})
+                        {}
+                        (keys cfg))]
+    (let [updated-map (cfg-liveness-iteration
+                       cfg live-vars-map)]
+      (if (= updated-map live-vars-map)
+        updated-map
+        (recur updated-map)))))
