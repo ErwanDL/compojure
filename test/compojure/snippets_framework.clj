@@ -40,3 +40,8 @@
   (for [[snippet-fp expect-fp] (make-snippet-file-expect-file-pairs folder-name)]
     (let [[args expected-res] (parse-expect-file expect-fp)]
       [snippet-fp args expected-res])))
+
+(defn submap? [m1 m2]
+  (every? (fn [[k v]]
+            (= v (get m2 k)))
+          m1))

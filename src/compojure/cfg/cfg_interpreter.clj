@@ -3,6 +3,7 @@
             [compojure.interpreter-framework :refer [interpreter-maker]]
             [compojure.e-lang.e-prog :refer [ast-to-e-program]]
             [compojure.cfg.cfg-prog :refer [to-cfg-prog]]
+            [compojure.cfg.dead-assign-elim :refer [eliminate-program-dead-assignments]]
             [compojure.exceptions :refer [no-return-exception]]))
 
 (defn execute-cfg-fn [fn state]
@@ -13,5 +14,7 @@
         (recur next-node new-s)))
     (throw (no-return-exception fn))))
 
-(def interpret (interpreter-maker (comp to-cfg-prog ast-to-e-program)
+(def interpret (interpreter-maker (comp eliminate-program-dead-assignments
+                                        to-cfg-prog
+                                        ast-to-e-program)
                                   execute-cfg-fn))

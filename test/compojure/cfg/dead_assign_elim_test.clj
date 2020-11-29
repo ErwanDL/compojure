@@ -54,6 +54,8 @@
                (:before-elim dependent-dead-assigns))))))
 
 (deftest eliminate-dead-assignments-test
-  (is (= (:after-elim dependent-dead-assigns)
-         (eliminate-dead-assignments
-          (:before-elim dependent-dead-assigns)))))
+  (testing "Eliminates all dead assignments, even if they
+            depend on another dead assignment"
+    (is (= (:after-elim dependent-dead-assigns)
+           (eliminate-dead-assignments
+            (:before-elim dependent-dead-assigns))))))

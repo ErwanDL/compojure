@@ -29,9 +29,10 @@
    already been loaded into state).
    
    Returns an interpreter function, that takes as input
-   a source code and a coll of arguments, and that returns
-   the execution result as a map :
-   {:output ..., :error ..., :retval ...}"
+   a source code string and a coll of arguments, and returns
+   the execution result as a map with keys 
+   :output, :error, :retval, and :final-state if the program
+   successfully returned."
   [converter main-fn-executer]
   (fn [source-code args]
     (let [e-prog (converter (parse source-code))
@@ -44,5 +45,6 @@
           (catch clojure.lang.ExceptionInfo e
             (let [data (ex-data e)]
               (if (= (:type data)  :return-encountered)
-                {:output (str *out*), :error nil, :retval (:retval data)}
+                {:output (str *out*), :error nil
+                 :retval (:retval data), :final-state (:final-state data)}
                 {:output (str *out*), :error (ex-message e), :retval nil}))))))))

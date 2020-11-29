@@ -28,3 +28,8 @@
       (if (= simpl-g g)
         simpl-g
         (recur simpl-g)))))
+
+(defn eliminate-program-dead-assignments [cfg-prog]
+  (cfgl/->Program
+   (map #(assoc % :cfg (eliminate-dead-assignments (:cfg %)))
+        (:functions cfg-prog))))
